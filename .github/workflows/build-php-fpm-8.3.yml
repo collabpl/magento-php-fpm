@@ -1,6 +1,12 @@
-name: build-php-fpm-8.3
+name: Build & Push - collabpl/magento-php-fpm:8.3
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    push:
+      branches:
+        - main
+  release:
+    types: [published]
 
 jobs:
   php-8-3:
