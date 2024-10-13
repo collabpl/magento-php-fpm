@@ -1,14 +1,3 @@
-FROM golang:1.15 AS builder
-
-RUN if [ $(uname -m) = "x86_64" ]; then mailhog_arch="amd64"; else mailhog_arch="arm64"; fi \
-    && wget -O mhsendmail.tar.gz https://github.com/mailhog/mhsendmail/archive/refs/tags/v0.2.0.tar.gz \
-    && tar -xf mhsendmail.tar.gz \
-    && mkdir -p ./src/github.com/mailhog/ \
-    && mv ./mhsendmail-0.2.0 ./src/github.com/mailhog/mhsendmail \
-    && cd ./src/github.com/mailhog/mhsendmail/ \
-    && go get . \
-    && GOOS=linux GOARCH=${mailhog_arch} go build -o mhsendmail .
-
 FROM php:8.3-fpm
 
 ARG MAGENTO_ROOT=/var/www/html
@@ -32,7 +21,6 @@ RUN apt-get update \
   sendmail \
   sudo \
   iproute2 \
-  git \
   gnupg2 \
   ca-certificates \
   lsb-release \
@@ -54,10 +42,6 @@ RUN apt-get update \
   zip \
   python3-yaml \
   && rm -rf /var/lib/apt/lists/*
-
-# Install MailHog
-COPY --from=builder /go/src/github.com/mailhog/mhsendmail/mhsendmail /usr/local/bin/
-RUN sudo chmod +x /usr/local/bin/mhsendmail
 
 # Configure the gd library
 RUN docker-php-ext-configure \
@@ -93,28 +77,11 @@ RUN docker-php-ext-install -j$(nproc) \
 RUN pecl install -o -f \
   gnupg \
   mailparse \
-  msgpack \
   oauth \
   pcov \
-  raphf \
   redis \
   xmlrpc-1.0.0RC3 \
   yaml
-
-RUN if [ $(uname -m) = "x86_64" ]; then ldap_arch="x86_64-linux-gnu"; else ldap_arch="aarch64-linux-gnu"; fi \
-  && docker-php-ext-configure ldap --with-libdir=lib/${ldap_arch}
-RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
-  && rm -f /usr/local/lib/php/extensions/*/*sodium.so \
-  && apt-get remove libsodium* -y \
-  && mkdir -p /tmp/libsodium \
-  && curl -sL https://github.com/jedisct1/libsodium/archive/1.0.18-RELEASE.tar.gz | tar xzf - -C  /tmp/libsodium \
-  && cd /tmp/libsodium/libsodium-1.0.18-RELEASE/ \
-  && ./configure \
-  && make && make check \
-  && make install \
-  && cd / \
-  && rm -rf /tmp/libsodium \
-  && pecl install -o -f libsodium
 
 COPY conf/etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
 COPY conf/etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
@@ -135,6 +102,6 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 WORKDIR ${MAGENTO_ROOT}
 
-USER www
+USER root
 
 CMD ["php-fpm", "-R"]
