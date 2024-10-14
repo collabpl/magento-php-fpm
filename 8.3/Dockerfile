@@ -116,11 +116,6 @@ RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
   && rm -rf /tmp/libsodium \
   && pecl install -o -f libsodium
 
-
-RUN if [ $(uname -m) = "x86_64" ]; then kubectl_arch="amd64"; else kubectl_arch="arm64"; fi \
-    && curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${kubectl_arch}/kubectl" \
-    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
 COPY conf/etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
 COPY conf/etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
 COPY conf/etc/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
