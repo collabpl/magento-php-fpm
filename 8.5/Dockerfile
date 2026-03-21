@@ -36,7 +36,6 @@ RUN apt-get update \
   gnupg2 \
   ca-certificates \
   lsb-release \
-  software-properties-common \
   libbz2-dev \
   libjpeg62-turbo-dev \
   libpng-dev \
