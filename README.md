@@ -21,12 +21,23 @@ Available on:
 
 ### PHP extensions
 
-**Built-in**: `bcmath`, `bz2`, `calendar`, `exif`, `gd`, `gettext`, `gmp`, `intl`,
-`mysqli`, `opcache`, `pdo_mysql`, `pspell`, `shmop`, `soap`, `sockets`, `sysvmsg`,
-`sysvsem`, `sysvshm`, `tidy`, `xsl`, `zip`, `pcntl`, `ftp`, `ldap`
+Core extensions common to all versions:
+`bcmath`, `bz2`, `calendar`, `exif`, `gd`, `gmp`, `intl`, `mysqli`, `pdo_mysql`,
+`shmop`, `soap`, `sockets`, `sysvmsg`, `sysvsem`, `sysvshm`, `tidy`, `xsl`,
+`zip`, `pcntl`, `ftp`, `ldap`
 
-**PECL**: `gnupg`, `mailparse`, `msgpack`, `oauth`, `pcov`, `raphf`, `redis`,
-`xmlrpc`, `yaml`, `libsodium`
+Per-version differences:
+
+| Extension | 8.3 | 8.4 | 8.5 |
+|-----------|-----|-----|-----|
+| `pspell` | built-in | via PECL | — |
+| `gettext` | ✅ | ✅ | — |
+| `opcache` | ✅ | ✅ | — |
+
+**PECL** (all versions): `gnupg`, `mailparse`, `msgpack`, `oauth`, `pcov`, `raphf`,
+`redis`, `xmlrpc`, `yaml`, `libsodium`
+
+**PECL** (8.4 only): additionally `pspell`
 
 ### Other
 
@@ -94,7 +105,7 @@ services:
 
 ```
 .
-├── conf/etc/                  # shared PHP/FPM config (all versions)
+├── etc/                       # shared PHP/FPM config (all versions)
 │   ├── php-fpm.conf           # PHP-FPM pool config
 │   ├── php-fpm.ini            # PHP settings (memory, opcache)
 │   ├── mail.ini               # sendmail_path

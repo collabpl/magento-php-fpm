@@ -11,7 +11,7 @@ RUN if [ $(uname -m) = "x86_64" ]; then mailhog_arch="amd64"; else mailhog_arch=
 
 FROM php:8.5-fpm
 
-ARG MAGENTO_ROOT=/app
+ARG MAGENTO_ROOT=/var/www/html
 
 ENV PHP_MEMORY_LIMIT 2G
 ENV PHP_VALIDATE_TIMESTAMPS 1
