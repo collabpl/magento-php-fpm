@@ -45,7 +45,7 @@ RUN apt-get update \
   libgpgme11-dev \
   libicu-dev \
   libldap2-dev \
-  libpcre3-dev \
+  libpcre2-dev \
   libpspell-dev \
   libtidy-dev \
   libxslt1-dev \
