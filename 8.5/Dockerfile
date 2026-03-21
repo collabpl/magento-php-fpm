@@ -11,7 +11,7 @@ RUN if [ $(uname -m) = "x86_64" ]; then mailhog_arch="amd64"; else mailhog_arch=
 
 FROM php:8.5-fpm
 
-ARG MAGENTO_ROOT=/var/www/html
+ARG MAGENTO_ROOT=/app
 
 ENV PHP_MEMORY_LIMIT 2G
 ENV PHP_VALIDATE_TIMESTAMPS 1
@@ -21,7 +21,7 @@ ENV UPLOAD_MAX_FILESIZE 64M
 ENV SENDMAIL_PATH /dev/null
 ENV PHPRC ${MAGENTO_ROOT}/php.ini
 
-ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl ftp
+ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd intl mysqli pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl ftp
 
 # Install dependencies
 RUN apt-get update \
@@ -36,6 +36,7 @@ RUN apt-get update \
   gnupg2 \
   ca-certificates \
   lsb-release \
+  python3-apt \
   libbz2-dev \
   libjpeg62-turbo-dev \
   libpng-dev \
@@ -45,7 +46,6 @@ RUN apt-get update \
   libicu-dev \
   libldap2-dev \
   libpcre2-dev \
-  libpspell-dev \
   libtidy-dev \
   libxslt1-dev \
   libyaml-dev \
@@ -61,8 +61,6 @@ RUN sudo chmod +x /usr/local/bin/mhsendmail
 # Configure the gd library
 RUN docker-php-ext-configure \
   gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
-RUN docker-php-ext-configure \
-  opcache --enable-opcache
 
 # Install required PHP extensions
 RUN docker-php-ext-install -j$(nproc) \
@@ -71,13 +69,10 @@ RUN docker-php-ext-install -j$(nproc) \
   calendar \
   exif \
   gd \
-  gettext \
   gmp \
   intl \
   mysqli \
-  opcache \
   pdo_mysql \
-  pspell \
   shmop \
   soap \
   sockets \
@@ -116,11 +111,11 @@ RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
   && rm -rf /tmp/libsodium \
   && pecl install -o -f libsodium
 
-COPY conf/etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
-COPY conf/etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
-COPY conf/etc/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
-COPY conf/etc/php-fpm.conf /usr/local/etc/
-COPY conf/etc/php-gnupg.ini /usr/local/etc/php/conf.d/gnupg.ini
+COPY etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
+COPY etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
+COPY etc/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
+COPY etc/php-fpm.conf /usr/local/etc/
+COPY etc/php-gnupg.ini /usr/local/etc/php/conf.d/gnupg.ini
 
 RUN groupadd -g 1000 www && useradd -g 1000 -u 1000 -d ${MAGENTO_ROOT} -s /bin/bash www
 

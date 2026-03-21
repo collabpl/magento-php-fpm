@@ -94,15 +94,15 @@ services:
 
 ```
 .
+├── conf/etc/                  # shared PHP/FPM config (all versions)
+│   ├── php-fpm.conf           # PHP-FPM pool config
+│   ├── php-fpm.ini            # PHP settings (memory, opcache)
+│   ├── mail.ini               # sendmail_path
+│   ├── php-pcov.ini           # PCOV config
+│   └── php-gnupg.ini          # gnupg extension
+├── docker-entrypoint.sh       # shared entrypoint (all versions)
 ├── 8.3/
-│   ├── Dockerfile
-│   ├── docker-entrypoint.sh
-│   └── conf/etc/
-│       ├── php-fpm.conf       # PHP-FPM pool config
-│       ├── php-fpm.ini        # PHP settings (memory, opcache)
-│       ├── mail.ini           # sendmail_path
-│       ├── php-pcov.ini       # PCOV config
-│       └── php-gnupg.ini      # gnupg extension
+│   └── Dockerfile
 ├── 8.4/  (same structure)
 ├── 8.5/  (same structure)
 ├── .github/

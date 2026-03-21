@@ -13,15 +13,15 @@ FROM php:8.3-fpm
 
 ARG MAGENTO_ROOT=/var/www/html
 
-ENV PHP_MEMORY_LIMIT 2G
-ENV PHP_VALIDATE_TIMESTAMPS 1
-ENV DEBUG false
-ENV MAGENTO_RUN_MODE production
-ENV UPLOAD_MAX_FILESIZE 64M
-ENV SENDMAIL_PATH /dev/null
-ENV PHPRC ${MAGENTO_ROOT}/php.ini
+ENV PHP_MEMORY_LIMIT=2G
+ENV PHP_VALIDATE_TIMESTAMPS=1
+ENV DEBUG=false
+ENV MAGENTO_RUN_MODE=production
+ENV UPLOAD_MAX_FILESIZE=64M
+ENV SENDMAIL_PATH=/dev/null
+ENV PHPRC=${MAGENTO_ROOT}/php.ini
 
-ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl ftp
+ENV PHP_EXTENSIONS="bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl ftp"
 
 # Install dependencies
 RUN apt-get update \
@@ -116,11 +116,11 @@ RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
   && rm -rf /tmp/libsodium \
   && pecl install -o -f libsodium
 
-COPY conf/etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
-COPY conf/etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
-COPY conf/etc/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
-COPY conf/etc/php-fpm.conf /usr/local/etc/
-COPY conf/etc/php-gnupg.ini /usr/local/etc/php/conf.d/gnupg.ini
+COPY etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
+COPY etc/php-pcov.ini /usr/local/etc/php/conf.d/zz-pcov-settings.ini
+COPY etc/mail.ini /usr/local/etc/php/conf.d/zz-mail.ini
+COPY etc/php-fpm.conf /usr/local/etc/
+COPY etc/php-gnupg.ini /usr/local/etc/php/conf.d/gnupg.ini
 
 RUN groupadd -g 1000 www && useradd -g 1000 -u 1000 -d ${MAGENTO_ROOT} -s /bin/bash www
 
@@ -128,6 +128,8 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 RUN mkdir -p ${MAGENTO_ROOT}
+
+VOLUME ${MAGENTO_ROOT}
 
 RUN chown -R www:www /usr/local /var/www /var/log /usr/local/etc/php/conf.d ${MAGENTO_ROOT}
 

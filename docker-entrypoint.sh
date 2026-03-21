@@ -13,6 +13,4 @@ if [ -x "$(command -v ${PHP_EXT_COM_ON})" ] && [ ! -z "${PHP_EXTENSIONS}" ]; the
   ${PHP_EXT_COM_ON} ${PHP_EXTENSIONS}
 fi
 
-y | sendmailconfig
-
 exec "$@"
