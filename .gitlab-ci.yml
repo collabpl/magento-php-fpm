@@ -1,0 +1,10 @@
+include:
+  - component: "$CI_SERVER_FQDN/collab/components/kaniko-build/kaniko-build@main"
+    inputs:
+      stage: build
+
+docker-build:
+  extends: .kaniko-build
+  parallel:
+    matrix:
+      - TAG: ['8.3', '8.4', '8.5']
