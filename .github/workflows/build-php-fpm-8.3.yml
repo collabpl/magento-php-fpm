@@ -2,11 +2,9 @@ name: Build & Push - collabpl/magento-php-fpm:8.3
 
 on:
   workflow_dispatch:
-    push:
-      branches:
-        - main
-  release:
-    types: [published]
+  push:
+    tags:
+      - '8.3.*'
 
 jobs:
   php-8-3:
@@ -38,3 +36,4 @@ jobs:
           push: true
           tags: |
             collabpl/magento-php-fpm:8.3
+            ${{ github.ref_type == 'tag' && format('collabpl/magento-php-fpm:{0}', github.ref_name) || '' }}

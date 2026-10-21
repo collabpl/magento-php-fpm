@@ -123,8 +123,13 @@ services:
 
 ## CI/CD
 
-**GitHub Actions** builds for both `linux/amd64` and `linux/arm64` and pushes to
-Docker Hub on every push to `main` and on published releases. Requires
+**GitHub Actions** builds only the matching PHP variant when a version tag is
+pushed (`8.3.*`, `8.4.*`, or `8.5.*`), or via manual workflow dispatch.
+PHP 8.5 builds only for `linux/amd64`; PHP 8.3 and 8.4 build for both
+`linux/amd64` and `linux/arm64`. Tag builds publish both the minor image tag
+and the exact Git tag (for example, `8.5` and `8.5.12`). Branch-based manual
+builds publish only the minor image tag. Release publication does not trigger builds.
+Requires
 `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets.
 
 **GitLab CI** uses the internal
@@ -137,7 +142,7 @@ component to build all three variants in parallel and push to the GitLab Contain
 2. Update the `FROM php:{version}-fpm` line in the Dockerfile.
 3. Add the new tag to the `.gitlab-ci.yml` parallel matrix.
 4. Create a new GitHub Actions workflow `.github/workflows/build-php-fpm-{version}.yml`.
-5. Push — both pipelines will build and publish the new image automatically.
+5. Push a matching version tag to build and publish the image with GitHub Actions.
 
 ## License
 
